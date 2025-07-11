@@ -5,7 +5,7 @@ Item {
     id: item1
     CustomButton {
         id: button
-        text: "Zip"
+        text: "COMPRESS"
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.horizontalCenter
@@ -18,7 +18,7 @@ Item {
 
     CustomButton {
         id: button1
-        text: qsTr("Unzip")
+        text: qsTr("UNCOMPRESS")
         anchors.left: parent.horizontalCenter
         anchors.right: parent.right
         anchors.top: parent.top

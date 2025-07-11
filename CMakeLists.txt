@@ -20,7 +20,13 @@ find_package(Qt6 6.8 REQUIRED COMPONENTS Core Gui Widgets Qml Quick  )
 qt_standard_project_setup()
 
 
-qt_add_executable(${CMAKE_PROJECT_NAME})
+qt_add_executable(${CMAKE_PROJECT_NAME}
+        App/Model/model.cpp
+        App/Model/model.h
+        App/Model/filesListModel.cpp
+        App/Model/filesListModel.h
+        App/Model/file.cpp
+        App/Model/file.h)
 qt_add_resources(${CMAKE_PROJECT_NAME} "configuration"
     PREFIX "/"
     FILES

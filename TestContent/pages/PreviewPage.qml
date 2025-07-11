@@ -21,7 +21,7 @@ Item {
         anchors.rightMargin: 20
         anchors.topMargin: 100
         anchors.bottomMargin: 20
-        source: "../../conditions/images/test-image-1-gs.bmp"
+        source: "../../testTask/images/test-image-1-gs.bmp"
         fillMode: Image.PreserveAspectFit
     }
 
