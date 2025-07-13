@@ -15,7 +15,6 @@ qt6_add_qml_module(TestContent
         "modals/ErrorModal.qml"
         "modals/WaitModal.qml"
         "modals/CustomModal.qml"
-        "modals/DialogManager.qml"
         "widgets/FileDelegate.qml"
         "widgets/CustomButton.qml"
         "widgets/BackButton.qml"
