@@ -7,6 +7,7 @@ Rectangle {
     width: 360
     height: 240
     radius: 20
+    property string message: " somthing wrong"
     implicitWidth: 360
     implicitHeight: 240
     Text {
@@ -19,8 +20,8 @@ Rectangle {
         font.pointSize: 29
     }
     Text {
-        id: message
-        text: qsTr("Message:") + " somthing wrong"
+        id: messageLabel
+        text: qsTr("Message: ") + message
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: name.bottom
@@ -39,7 +40,7 @@ Rectangle {
         text: "Ok"
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.top: message.bottom
+        anchors.top: messageLabel.bottom
         anchors.bottom: parent.bottom
         anchors.leftMargin: 60
         anchors.rightMargin: 60

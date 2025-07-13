@@ -3,28 +3,39 @@
 
 #include <QApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
 
+#include "logger.h"
 #include "autogen/environment.h"
+#include "Controller/asyncDecorator.h"
+#include "Model/model.h"
 
 int main(int argc, char *argv[])
 {
     set_qt_environment();
     QApplication app(argc, argv);
+    qSetMessagePattern(LOG_MESSAGE_PATTERN);
+    QQmlApplicationEngine testAppView;
+    Model testAppModel;
 
-    QQmlApplicationEngine engine;
+    AsyncDecorator testAppController(&testAppModel);
     const QUrl url(mainQmlFile);
+
+    testAppView.rootContext()->setContextProperty("testAppModel", &testAppModel);
+    testAppView.rootContext()->setContextProperty("testAppController", &testAppController);
+
     QObject::connect(
-                &engine, &QQmlApplicationEngine::objectCreated, &app,
+                &testAppView, &QQmlApplicationEngine::objectCreated, &app,
                 [url](QObject *obj, const QUrl &objUrl) {
         if (!obj && url == objUrl)
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
 
-    engine.addImportPath(QCoreApplication::applicationDirPath() + "/qml");
-    engine.addImportPath(":/");
-    engine.load(url);
+    testAppView.addImportPath(QCoreApplication::applicationDirPath() + "/qml");
+    testAppView.addImportPath(":/");
+    testAppView.load(url);
 
-    if (engine.rootObjects().isEmpty())
+    if (testAppView.rootObjects().isEmpty())
         return -1;
 
     return app.exec();

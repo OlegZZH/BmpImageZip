@@ -19,20 +19,16 @@ Window {
         anchors.rightMargin: 20
         anchors.topMargin: 20
         anchors.bottomMargin: 20
-        initialItem: startPage
+        initialItem: selectFilePage
     }
 
-    Component {
-        id: startPage
-        StartPage {}
-    }
     Component {
         id: selectFilePage
         SelectFilePage {}
     }
     Component {
-        id: previewPage
-        PreviewPage {}
+        id: savePage
+        SavePage {}
     }
     CustomModal {
         id: waitDialog
@@ -48,8 +44,15 @@ Window {
         contentItem: ErrorModal {
             id: errorDialogContent
         }
-        function fillAndOpen() {
+        function fillAndOpen(message) {
+            errorDialogContent.message = message
             errorDialog.open()
+        }
+    }
+    Connections {
+        target: testAppController
+        function onNotifyUserSignal(message) {
+            errorDialog.fillAndOpen(message)
         }
     }
 }

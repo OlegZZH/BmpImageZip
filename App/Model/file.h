@@ -13,7 +13,7 @@ public:
     explicit File(QObject *parent = nullptr);
 
     PROPERTY_DEFINITION(name, QString)
-    PROPERTY_DEFINITION(size, QString)
+    PROPERTY_DEFINITION(size, qint64)
 
 
 };

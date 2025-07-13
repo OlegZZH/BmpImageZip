@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 
 Item {
-    id: root
+    id: waitModal
     implicitHeight: 200
     implicitWidth: 200
 
@@ -13,7 +13,6 @@ Item {
     }
 
     Text {
-        id: text1
         color: "#ffffff"
         text: qsTr("Wait, it's being processed")
         anchors.bottom: parent.bottom

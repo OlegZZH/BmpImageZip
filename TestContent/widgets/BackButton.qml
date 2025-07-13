@@ -8,7 +8,4 @@ CustomButton {
     anchors.leftMargin: 30
     anchors.topMargin: 30
     rectangleBorderwidth: 4
-    onClicked: {
-        mainStackView.pop()
-    }
 }

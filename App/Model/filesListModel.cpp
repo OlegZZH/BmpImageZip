@@ -22,8 +22,8 @@ QVariant FilesListModel::data(const QModelIndex &index, int role) const {
 
 QHash<int, QByteArray> FilesListModel::roleNames() const {
     return {
-        {NameRole, "name"},
-        {SizeRole, "size"}
+        {NameRole, "nameRole"},
+        {SizeRole, "sizeRole"}
     };
 }
 
@@ -31,4 +31,22 @@ void FilesListModel::addFile(File *file) {
     beginInsertRows(QModelIndex(), m_files.size(), m_files.size());
     m_files.append(file);
     endInsertRows();
+}
+
+void FilesListModel::clear() {
+    beginResetModel();
+
+    for (File *file: m_files) {
+        if (file)
+            file->deleteLater();
+    }
+
+    m_files.clear();
+    endResetModel();
+}
+
+File *FilesListModel::getFile(int index) const {
+    if (index >= 0 && index < m_files.size())
+        return m_files[index];
+    return nullptr;
 }

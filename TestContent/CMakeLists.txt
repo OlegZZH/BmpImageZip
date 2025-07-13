@@ -10,14 +10,17 @@ qt6_add_qml_module(TestContent
     RESOURCE_PREFIX "/qt/qml"
     QML_FILES
         "App.qml"
+        "pages/SavePage.qml"
+        "pages/SelectFilePage.qml"
+        "modals/ErrorModal.qml"
+        "modals/WaitModal.qml"
+        "modals/CustomModal.qml"
+        "modals/DialogManager.qml"
+        "widgets/FileDelegate.qml"
         "widgets/CustomButton.qml"
         "widgets/BackButton.qml"
-        "modals/ErrorModal.qml"
-        "modals/CustomModal.qml"
-        "modals/WaitModal.qml"
-        "pages/StartPage.qml"
-        "pages/SelectFilePage.qml"
-        "pages/PreviewPage.qml"
+    RESOURCES
+        "images/tabler--mood-empty.svg"
 )
 
 

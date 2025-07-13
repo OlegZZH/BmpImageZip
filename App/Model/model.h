@@ -6,7 +6,7 @@
 #include "filesListModel.h"
 #include "App/macros.h"
 
-enum class Mode { COMPRESS, UNCOMPRESS };
+enum class Mode { PACK, UNPACK };
 
 class Model : public QObject {
     Q_OBJECT
@@ -15,6 +15,8 @@ public:
     explicit Model(QObject *parent = nullptr);
 
     PROPERTY_DEFINITION(currentPath, QString)
+
+    PROPERTY_DEFINITION(currentFile, File*)
 
     PROPERTY_DEFINITION(mode, Mode)
 

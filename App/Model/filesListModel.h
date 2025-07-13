@@ -24,6 +24,10 @@ public:
 
     void addFile(File *file) ;
 
+    void clear();
+
+    File* getFile(int index) const;
+
 private:
     QList<File *> m_files;
 };

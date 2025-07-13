@@ -1,42 +1,129 @@
 import QtQuick
 import QtQuick.Controls
 import "../widgets"
+import QtQuick.Dialogs
 
 Item {
-    id: root
+    id: selectFilePageContent
     width: 1280
     height: 720
-    BackButton {
-    }
+
     Text {
-        id: text1
+        id: pleaseLabel
         text: qsTr("Please select a file")
+        anchors.left: previewImage.right
         anchors.top: parent.top
+        anchors.leftMargin: 100
         anchors.topMargin: 100
-        font.pixelSize: 46
-        anchors.horizontalCenter: parent.horizontalCenter
+        font.pixelSize: 36
     }
-    Button {
-        id: selectButton
-        text: "Select file"
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: text1.bottom
-        anchors.bottom: parent.bottom
-        anchors.leftMargin: 200
-        anchors.rightMargin: 200
-        anchors.topMargin: 150
-        anchors.bottomMargin: 100
-        font.pointSize: 20
-        background: Rectangle {
-            id: rectangle
-            color: selectButton.down ? Qt.darker("#e0e0e0") : "#e0e0e0"
-            radius: 22
-            border.color: "#979797"
-            border.width: 2
+
+    TextField {
+        id: pathField
+        width: 300
+        anchors.left: previewImage.right
+        anchors.top: pleaseLabel.bottom
+        anchors.leftMargin: 50
+        anchors.topMargin: 50
+        placeholderText: qsTr("Path")
+        text: testAppModel.currentPath
+        enabled: false
+    }
+
+    CustomButton {
+        id: customButton
+        text: "Select"
+        anchors.verticalCenter: pathField.verticalCenter
+        anchors.left: pathField.right
+        anchors.leftMargin: 20
+        font.pointSize: 17
+        rectangleBorderwidth: 4
+        FolderDialog {
+            id: folderDialog
+            onAccepted: {
+                const path = selectedFolder.toString().replace("file://", "")
+                testAppController.selectPath(path)
+            }
         }
         onClicked: {
-            mainStackView.push(previewPage)
+
+            folderDialog.open()
+        }
+    }
+
+    ListView {
+        id: filesListView
+        anchors.left: pathField.left
+        anchors.right: customButton.right
+        anchors.top: pathField.bottom
+        anchors.bottom: parent.bottom
+        anchors.leftMargin: 0
+        anchors.rightMargin: 0
+        anchors.topMargin: 60
+        anchors.bottomMargin: 160
+        clip: true
+        spacing: 6
+        model: testAppModel.filesListModel
+        delegate: FileDelegate {
+            width: filesListView.width
+            sizeB: sizeRole
+            fileNameText: nameRole
+            selected: ListView.isCurrentItem
+            mouseArea.onClicked: {
+                filesListView.currentIndex = index
+            }
+        }
+        onCurrentIndexChanged: {
+            testAppController.selectFile(currentIndex)
+        }
+    }
+
+    Image {
+        id: previewImage
+        anchors.left: parent.left
+        anchors.right: parent.horizontalCenter
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.leftMargin: 20
+        anchors.rightMargin: 50
+        anchors.topMargin: 20
+        anchors.bottomMargin: 20
+        source: {
+            if (testAppModel.currentFile) {
+                const parts = testAppModel.currentFile.name.split(".")
+                const extension = parts.length > 1 ? parts.pop() : ""
+                if (extension !== "barch") {
+                    return "file://" + testAppModel.currentPath + "/" + testAppModel.currentFile.name
+                }
+            }
+            return "../images/tabler--mood-empty.svg"
+        }
+        fillMode: Image.PreserveAspectFit
+    }
+
+    CustomButton {
+        id: convertButton
+        height: 60
+        text: testAppModel.mode ? "Uncompress" : "Compress"
+        anchors.left: filesListView.left
+        anchors.right: filesListView.right
+        anchors.top: filesListView.bottom
+        anchors.leftMargin: 10
+        anchors.rightMargin: 10
+        anchors.topMargin: 20
+        borderColor: "#9f4848"
+        enabled: testAppModel.currentFile
+        onClicked: {
+            waitDialog.fillAndOpen()
+            var result = testAppController.convert()
+            result.statusChanged.connect(function (status) {
+                if (status) {
+                    waitDialog.close()
+                    mainStackView.replace(savePage)
+                } else {
+                    waitDialog.close()
+                }
+            })
         }
     }
 }

@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QVariant>
-#include "macros.h"
+#include "App/macros.h"
 
 
 class TaskResult : public QObject {

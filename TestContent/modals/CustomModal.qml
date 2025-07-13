@@ -8,7 +8,7 @@ Popup {
     y: (720 - height) / 2
     modal: true
     padding: 0
-    closePolicy: Popup.NoAutoClose | Popup.CloseOnPressOutside
+    closePolicy: Popup.NoAutoClose
     background: Rectangle {
         color: "#00ffffff"
         border.width: 0

@@ -1,0 +1,16 @@
+@startyaml
+currentPath : QString
+currentFile:
+    name: QString
+    size: qint64
+mode :
+    - PACK
+    - UNPACK
+saveToPath: QString
+filesListModel (QAbstractListModel):
+    - ...
+    - ...
+    - ...
+    - ...
+    - ...
+@endyaml

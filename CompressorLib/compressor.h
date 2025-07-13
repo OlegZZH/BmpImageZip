@@ -13,7 +13,7 @@
 
 #pragma pack(push, 1)
 struct BMPFileHeader {
-    uint16_t bfType; // "BM"
+    uint16_t bfType;
     uint32_t bfSize;
     uint16_t bfReserved1;
     uint16_t bfReserved2;
@@ -41,7 +41,7 @@ struct RawImageData {
     std::vector<unsigned char> data;
 };
 
-RawImageData loadGrayscaleBMP(const std::string &filePath) {
+inline RawImageData loadGrayscaleBMP(const std::string &filePath) {
     std::ifstream in(filePath, std::ios::binary);
     if (!in) throw std::runtime_error("Cannot open BMP file.");
 
@@ -62,7 +62,7 @@ RawImageData loadGrayscaleBMP(const std::string &filePath) {
     int height = std::abs(infoHeader.biHeight);
     bool bottomUp = infoHeader.biHeight > 0;
 
-    in.ignore(256 * 4); // palette
+    in.seekg(fileHeader.bfOffBits, std::ios::beg);
 
     int rowSize = ((width + 3) / 4) * 4;
     std::vector<unsigned char> data(width * height);
@@ -77,7 +77,7 @@ RawImageData loadGrayscaleBMP(const std::string &filePath) {
     return RawImageData{width, height, std::move(data)};
 }
 
-void saveAsGrayscaleBMP(const RawImageData &img, const std::string &filename) {
+inline void saveAsGrayscaleBMP(const RawImageData &img, const std::string &filename) {
     std::ofstream out(filename, std::ios::binary);
     if (!out) throw std::runtime_error("Cannot open output BMP file.");
 
@@ -130,14 +130,14 @@ void saveAsGrayscaleBMP(const RawImageData &img, const std::string &filename) {
     }
 }
 
-bool isLineEmpty(const RawImageData &img, int row) {
+inline bool isLineEmpty(const RawImageData &img, int row) {
     for (int col = 0; col < img.width; ++col)
         if (img.data[row * img.width + col] != 0xFF)
             return false;
     return true;
 }
 
-std::vector<uint8_t> encodeLine(const std::vector<unsigned char> &line) {
+inline std::vector<uint8_t> encodeLine(const std::vector<unsigned char> &line) {
     std::vector<uint8_t> encoded;
     std::vector<bool> bits;
 
@@ -179,7 +179,7 @@ std::vector<uint8_t> encodeLine(const std::vector<unsigned char> &line) {
     return encoded;
 }
 
-void saveBarch(const RawImageData &img, const std::string &outputPath) {
+inline void saveBarch(const RawImageData &img, const std::string &outputPath) {
     std::ofstream out(outputPath, std::ios::binary);
     if (!out) throw std::runtime_error("Cannot open .barch file");
 
@@ -188,7 +188,7 @@ void saveBarch(const RawImageData &img, const std::string &outputPath) {
     out.write(reinterpret_cast<const char *>(&h), 4);
 
     std::vector<bool> lineIndexBits;
-    std::vector<std::vector<uint8_t>> encodedLines;
+    std::vector<std::vector<uint8_t> > encodedLines;
 
     for (int row = 0; row < img.height; ++row) {
         if (isLineEmpty(img, row)) {
@@ -201,7 +201,6 @@ void saveBarch(const RawImageData &img, const std::string &outputPath) {
         }
     }
 
-    // Write line index bits as bytes
     uint8_t byte = 0;
     for (size_t i = 0; i < lineIndexBits.size(); ++i) {
         byte = (byte << 1) | lineIndexBits[i];
@@ -216,24 +215,24 @@ void saveBarch(const RawImageData &img, const std::string &outputPath) {
     }
 
     size_t encodedIdx = 0;
-    for (bool empty : lineIndexBits) {
+    for (bool empty: lineIndexBits) {
         if (!empty) {
-            const std::vector<uint8_t>& line = encodedLines[encodedIdx++];
+            const std::vector<uint8_t> &line = encodedLines[encodedIdx++];
             uint32_t lineSize = static_cast<uint32_t>(line.size());
-            out.write(reinterpret_cast<const char*>(&lineSize), sizeof(lineSize));
-            out.write(reinterpret_cast<const char*>(line.data()), lineSize);
+            out.write(reinterpret_cast<const char *>(&lineSize), sizeof(lineSize));
+            out.write(reinterpret_cast<const char *>(line.data()), lineSize);
         }
     }
 }
 
 
-RawImageData loadBarch(const std::string &inputPath) {
+inline RawImageData loadBarch(const std::string &inputPath) {
     std::ifstream in(inputPath, std::ios::binary);
     if (!in) throw std::runtime_error("Cannot open .barch file");
 
     uint32_t width, height;
-    in.read(reinterpret_cast<char*>(&width), 4);
-    in.read(reinterpret_cast<char*>(&height), 4);
+    in.read(reinterpret_cast<char *>(&width), 4);
+    in.read(reinterpret_cast<char *>(&height), 4);
 
     size_t indexBytes = (height + 7) / 8;
     std::vector<bool> lineIsEmpty(height);
@@ -253,13 +252,12 @@ RawImageData loadBarch(const std::string &inputPath) {
             std::fill(decodedData.begin() + row * width, decodedData.begin() + (row + 1) * width, 0xFF);
         } else {
             uint32_t lineSize;
-            in.read(reinterpret_cast<char*>(&lineSize), 4);
+            in.read(reinterpret_cast<char *>(&lineSize), 4);
             std::vector<uint8_t> encoded(lineSize);
-            in.read(reinterpret_cast<char*>(encoded.data()), lineSize);
+            in.read(reinterpret_cast<char *>(encoded.data()), lineSize);
 
-            // Decode using local bitstream
             std::vector<bool> bits;
-            for (uint8_t b : encoded) {
+            for (uint8_t b: encoded) {
                 for (int i = 7; i >= 0; --i)
                     bits.push_back((b >> i) & 1);
             }
