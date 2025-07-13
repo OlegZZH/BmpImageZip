@@ -6,7 +6,6 @@
 
 Controller::Controller(Model *model, QObject *parent): model(model), QObject(parent) {
     qDebug() << "App started";
-    selectPath(QCoreApplication::applicationDirPath());
 }
 
 void Controller::selectPackMode() {

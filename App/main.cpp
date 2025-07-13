@@ -19,6 +19,12 @@ int main(int argc, char *argv[])
     Model testAppModel;
 
     AsyncDecorator testAppController(&testAppModel);
+    if (argc >= 2) {
+        qDebug() << "Received path: " << argv[1];
+        testAppController.selectPath(argv[1]);
+    } else {
+        testAppController.selectPath(QCoreApplication::applicationDirPath());
+    }
     const QUrl url(mainQmlFile);
 
     testAppView.rootContext()->setContextProperty("testAppModel", &testAppModel);
